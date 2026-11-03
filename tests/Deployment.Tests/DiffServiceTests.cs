@@ -32,15 +32,17 @@ public class DiffServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task Diff_DeletedFiles_DetectsCorrectly()
+    public async Task Diff_TargetOnlyFiles_NotReported()
     {
+        // Deployment copies source files only; target-only files are left untouched.
         var src = CreateDir("src", new());
         var tgt = CreateDir("tgt", new() { ["oldfile.txt"] = "old" });
 
         var result = await _svc.ComputeAsync(src, tgt, "v2", "v1");
 
         Assert.Equal(0, result.Added);
-        Assert.Equal(1, result.Deleted);
+        Assert.Equal(0, result.Deleted);
+        Assert.False(result.HasChanges);
     }
 
     [Fact]

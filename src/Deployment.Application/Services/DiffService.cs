@@ -41,7 +41,7 @@ public class DiffService(IFileSystem fs, IChecksumService checksum, ILogger<Diff
             }
             else if (!hasSrc && hasTgt)
             {
-                diffs.Add(await BuildDiffAsync(key, null, tgtPath!, FileChangeType.Deleted, ct));
+                // Deployment only copies source files; target-only files are left untouched.
             }
             else
             {
