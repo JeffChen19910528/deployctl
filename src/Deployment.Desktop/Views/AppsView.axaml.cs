@@ -22,6 +22,7 @@ public partial class AppsView : UserControl
         CreateAppButton.Content = L.T("app.menu.create");
         AddEnvButton.Content = L.T("app.menu.addEnv");
         AddTargetButton.Content = L.T("app.menu.addTarget");
+        EditTargetButton.Content = L.T("app.menu.editTarget");
         EditExcludesButton.Content = L.T("app.menu.editExcludes");
         RefreshButton.Content = L.T("common.refresh");
 
@@ -110,6 +111,18 @@ public partial class AppsView : UserControl
             DeploymentPath = result.Value.Path,
             BackupExcludes = result.Value.BackupExcludes
         });
+        await RefreshAsync();
+    }
+
+    private async void OnEditTargetClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var dialog = new EditTargetDialog(_services);
+        var target = await dialog.ShowDialog<Domain.Entities.DeploymentTarget?>(_owner);
+        if (target is null) return;
+
+        await _services.AppRepo.UpdateTargetAsync(target);
+        await DialogService.ShowMessageAsync(_owner, L.T("app.menu.editTarget"),
+            L.T("app.target.updated", target.Name));
         await RefreshAsync();
     }
 
